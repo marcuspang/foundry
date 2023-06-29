@@ -119,10 +119,9 @@ casttest!(cast_wallet_sign_message_raw_data, |_: TestProject, mut cmd: TestComma
         "--private-key",
         "0x0000000000000000000000000000000000000000000000000000000000000001",
         "--raw",
-        "21cf1bbc8929e19be6b94f3824932e1aa22c443b0824dda6cbb445eab690a2b8",
+        "4a5c5d454721bbbb25540c3317521e71c373ae36458f960d2ad46ef088110e95",
     ]);
     let output = cmd.stdout_lossy();
-    // TODO: figure out why test fails with keccak256("\x19Ethereum Signed Message:\n4test")
     assert_eq!(output.trim(), "0xfe28833983d6faa0715c7e8c3873c725ddab6fa5bf84d40e780676e463e6bea20fc6aea97dc273a98eb26b0914e224c8dd5c615ceaab69ddddcf9b0ae3de0e371c");
 });
 

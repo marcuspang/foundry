@@ -12,7 +12,6 @@ use ethers::{
     core::rand::thread_rng,
     signers::{LocalWallet, Signer},
     types::{transaction::eip712::TypedData, Address, Signature, H256},
-    utils::keccak256,
 };
 use eyre::Context;
 
