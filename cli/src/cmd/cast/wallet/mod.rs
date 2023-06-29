@@ -2,8 +2,6 @@
 
 pub mod vanity;
 
-use std::str::FromStr;
-
 use crate::{
     cmd::{cast::wallet::vanity::VanityArgs, Cmd},
     opts::Wallet,
@@ -14,6 +12,7 @@ use ethers::{
     core::rand::thread_rng,
     signers::{LocalWallet, Signer},
     types::{transaction::eip712::TypedData, Address, Signature, H256},
+    utils::keccak256,
 };
 use eyre::Context;
 
@@ -166,7 +165,7 @@ impl WalletSubcommands {
                     };
                     wallet.sign_typed_data(&typed_data).await?
                 } else if raw {
-                    wallet.sign_hash(H256::from_str(&message)?).await?
+                    wallet.sign_hash(H256::from_slice(&hex::decode(&message)?)).await?
                 } else {
                     wallet.sign_message(Self::hex_str_to_bytes(&message)?).await?
                 };
