@@ -2,6 +2,8 @@
 
 pub mod vanity;
 
+use std::str::FromStr;
+
 use crate::{
     cmd::{cast::wallet::vanity::VanityArgs, Cmd},
     opts::Wallet,
@@ -11,7 +13,7 @@ use clap::Parser;
 use ethers::{
     core::rand::thread_rng,
     signers::{LocalWallet, Signer},
-    types::{transaction::eip712::TypedData, Address, Signature},
+    types::{transaction::eip712::TypedData, Address, Signature, H256},
 };
 use eyre::Context;
 
@@ -81,6 +83,10 @@ pub enum WalletSubcommands {
         #[clap(long, requires = "data")]
         from_file: bool,
 
+        /// If provided, the message will be treated as a 256-bit hash.
+        #[clap(long)]
+        raw: bool,
+
         #[clap(flatten)]
         wallet: Wallet,
     },
@@ -144,7 +150,7 @@ impl WalletSubcommands {
                 let addr = wallet.address();
                 println!("{}", SimpleCast::to_checksum_address(&addr));
             }
-            WalletSubcommands::Sign { message, data, from_file, wallet } => {
+            WalletSubcommands::Sign { message, data, from_file, raw, wallet } => {
                 let wallet = wallet.signer(0).await?;
                 let sig = if data {
                     let typed_data: TypedData = if from_file {
@@ -155,6 +161,8 @@ impl WalletSubcommands {
                         serde_json::from_str(&message)?
                     };
                     wallet.sign_typed_data(&typed_data).await?
+                } else if raw {
+                    wallet.sign_hash(H256::from_str(&message)?).await?
                 } else {
                     wallet.sign_message(Self::hex_str_to_bytes(&message)?).await?
                 };
