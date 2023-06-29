@@ -75,7 +75,7 @@ pub enum WalletSubcommands {
         ///
         /// Typed data can be provided as a json string or a file name.
         /// Use --data flag to denote the message as a string of typed data.
-        /// Use --data --from-file to denote the message is a file name containing typed data.
+        /// Use --data --from-file to denote the message as a file name containing typed data.
         /// The data will be combined and hashed using the EIP712 specification before signing.
         /// The data should be formatted as JSON.
         message: String,
