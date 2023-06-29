@@ -111,6 +111,21 @@ casttest!(cast_wallet_sign_message_hex_data, |_: TestProject, mut cmd: TestComma
     assert_eq!(output.trim(), "0x23a42ca5616ee730ff3735890c32fc7b9491a9f633faca9434797f2c845f5abf4d9ba23bd7edb8577acebaa3644dc5a4995296db420522bb40060f1693c33c9b1c");
 });
 
+// tests that `cast wallet sign message` outputs the expected signature, given a raw 256-bit hash
+casttest!(cast_wallet_sign_message_raw_data, |_: TestProject, mut cmd: TestCommand| {
+    cmd.args([
+        "wallet",
+        "sign",
+        "--private-key",
+        "0x0000000000000000000000000000000000000000000000000000000000000001",
+        "--raw",
+        "21cf1bbc8929e19be6b94f3824932e1aa22c443b0824dda6cbb445eab690a2b8",
+    ]);
+    let output = cmd.stdout_lossy();
+    // TODO: figure out why test fails with keccak256("\x19Ethereum Signed Message:\n4test")
+    assert_eq!(output.trim(), "0xfe28833983d6faa0715c7e8c3873c725ddab6fa5bf84d40e780676e463e6bea20fc6aea97dc273a98eb26b0914e224c8dd5c615ceaab69ddddcf9b0ae3de0e371c");
+});
+
 // tests that `cast wallet sign typed-data` outputs the expected signature, given a JSON string
 casttest!(cast_wallet_sign_typed_data_string, |_: TestProject, mut cmd: TestCommand| {
     cmd.args([
