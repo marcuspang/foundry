@@ -125,7 +125,7 @@ casttest!(cast_wallet_sign_message_raw_data, |_: TestProject, mut cmd: TestComma
     assert_eq!(output.trim(), "0xfe28833983d6faa0715c7e8c3873c725ddab6fa5bf84d40e780676e463e6bea20fc6aea97dc273a98eb26b0914e224c8dd5c615ceaab69ddddcf9b0ae3de0e371c");
 });
 
-// tests that `cast wallet sign message` outputs the expected signature, given a headerless message
+// tests that `cast wallet sign message` outputs the expected signature, given a message that is not prefixed with some header
 casttest!(cast_wallet_sign_message_headerless_data, |_: TestProject, mut cmd: TestCommand| {
     cmd.args([
         "wallet",

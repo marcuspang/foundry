@@ -11,7 +11,7 @@ use clap::Parser;
 use ethers::{
     core::rand::thread_rng,
     signers::{LocalWallet, Signer},
-    types::{transaction::eip712::TypedData, Address, Signature, H256},
+    types::{transaction::eip712::TypedData, Address, Signature, SignatureError, H256},
     utils::keccak256,
 };
 use eyre::Context;
@@ -114,6 +114,11 @@ pub enum WalletSubcommands {
         /// The address of the message signer.
         #[clap(long, short)]
         address: Address,
+
+        /// If provided, the message will be treated as a 256-bit hash, and will not be hashed when
+        /// verifying the signature.
+        #[clap(long)]
+        raw: bool,
     },
 }
 
@@ -181,8 +186,13 @@ impl WalletSubcommands {
                 };
                 println!("0x{sig}");
             }
-            WalletSubcommands::Verify { message, signature, address } => {
-                match signature.verify(Self::hex_str_to_bytes(&message)?, address) {
+            WalletSubcommands::Verify { message, signature, address, raw } => {
+                let result = if raw {
+                    signature.verify(H256::from_slice(&hex::decode(&message)?), address)
+                } else {
+                    signature.verify(Self::hex_str_to_bytes(&message)?, address)
+                };
+                match result {
                     Ok(_) => {
                         println!("Validation succeeded. Address {address} signed this message.")
                     }
@@ -255,7 +265,8 @@ mod tests {
 
     #[test]
     fn can_parse_wallet_sign_headerless_message() {
-        let args = WalletSubcommands::parse_from(["foundry-cli", "sign", "--headerless", "deadbeef"]);
+        let args =
+            WalletSubcommands::parse_from(["foundry-cli", "sign", "--headerless", "deadbeef"]);
         match args {
             WalletSubcommands::Sign { message, raw, headerless, data, from_file, .. } => {
                 assert_eq!(message, "deadbeef".to_string());
