@@ -126,7 +126,7 @@ casttest!(cast_wallet_sign_message_raw_data, |_: TestProject, mut cmd: TestComma
 });
 
 // tests that `cast wallet sign message` outputs the expected signature, given a headerless message
-casttest!(cast_wallet_sign_message_raw_data, |_: TestProject, mut cmd: TestCommand| {
+casttest!(cast_wallet_sign_message_headerless_data, |_: TestProject, mut cmd: TestCommand| {
     cmd.args([
         "wallet",
         "sign",
