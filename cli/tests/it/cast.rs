@@ -125,6 +125,20 @@ casttest!(cast_wallet_sign_message_raw_data, |_: TestProject, mut cmd: TestComma
     assert_eq!(output.trim(), "0xfe28833983d6faa0715c7e8c3873c725ddab6fa5bf84d40e780676e463e6bea20fc6aea97dc273a98eb26b0914e224c8dd5c615ceaab69ddddcf9b0ae3de0e371c");
 });
 
+// tests that `cast wallet sign message` outputs the expected signature, given a headerless message
+casttest!(cast_wallet_sign_message_raw_data, |_: TestProject, mut cmd: TestCommand| {
+    cmd.args([
+        "wallet",
+        "sign",
+        "--private-key",
+        "0x0000000000000000000000000000000000000000000000000000000000000001",
+        "--headerless",
+        "\x19Ethereum Signed Message:\n4test",
+    ]);
+    let output = cmd.stdout_lossy();
+    assert_eq!(output.trim(), "0xfe28833983d6faa0715c7e8c3873c725ddab6fa5bf84d40e780676e463e6bea20fc6aea97dc273a98eb26b0914e224c8dd5c615ceaab69ddddcf9b0ae3de0e371c");
+});
+
 // tests that `cast wallet sign typed-data` outputs the expected signature, given a JSON string
 casttest!(cast_wallet_sign_typed_data_string, |_: TestProject, mut cmd: TestCommand| {
     cmd.args([
